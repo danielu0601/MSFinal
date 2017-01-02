@@ -14,7 +14,6 @@
 struct tree_node {
     int ID; // node ID
     double D[DICT_SIZE]; // index data
-    struct tree_node *parent; // record parent for easy using
     struct tree_node *Pl; // pointer to left node
     struct tree_node *Pr; // pointer to right node
     int FID; // pointer to file, use file's ID here

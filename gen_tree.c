@@ -16,21 +16,23 @@
 struct tree_node {
     int ID; // node ID
     double D[DICT_SIZE]; // index data
-    struct tree_node *parent; // record parent for easy using
     struct tree_node *Pl; // pointer to left node
     struct tree_node *Pr; // pointer to right node
     int FID; // pointer to file, use file's ID here
 };
 
+double max( double a, double b ){
+    return (a>b)?a:b;
+}
 // struct of queue
-struct tree_node *queue[FILE_SIZE];
+struct tree_node queue[FILE_SIZE*2];
 int front = 0;
 int rear = -1;
 int itemCount = 0;
 
-void insert(struct tree_node *data) {
-    if( itemCount != FILE_SIZE ) {
-        if(rear == FILE_SIZE-1) {
+void insert(struct tree_node data) {
+    if( itemCount != FILE_SIZE*2 ) {
+        if( rear == FILE_SIZE*2-1 ) {
             rear = -1;
         }
         queue[++rear] = data;
@@ -38,9 +40,9 @@ void insert(struct tree_node *data) {
     }
 }
 
-struct tree_node* removeData() {
-    struct tree_node *data = queue[front++];
-    if(front == FILE_SIZE) {
+struct tree_node *removeData() {
+    struct tree_node *data = &queue[front++];
+    if( front == FILE_SIZE*2 ) {
         front = 0;
     }
     itemCount--;
@@ -60,10 +62,6 @@ void tree2file( FILE *fp, struct tree_node *root ) {
         fprintf(fp, "%lf ", root->D[i]);
     }
     // pointer
-    if ( root->parent == NULL )
-        fprintf(fp, "0 ");
-    else
-        fprintf(fp, "%d ", root->parent->ID);
     if ( root->Pl == NULL )
         fprintf(fp, "0 ");
     else
@@ -89,6 +87,7 @@ int main() {
     int TF[FILE_SIZE][DICT_SIZE], IDF[DICT_SIZE];
     FILE *fp;
     struct tree_node *root;
+    int ID = 1;
 
     // for each file
     for( i = 0; i < FILE_SIZE; i++ ) {
@@ -111,14 +110,52 @@ int main() {
         fclose(fp);
     }
 
-    // build the tree
+    // buold nodes and put into queue
     for( i = 0; i < FILE_SIZE; i++ ) {
-        
+        struct tree_node tp;
+
+        tp.ID = ID; ID++;
+        for( j = 0; j < DICT_SIZE; j++ ) {
+            //tp.D[j] = ;
+        }
+        tp.Pl = NULL;
+        tp.Pr = NULL;
+        tp.FID = i;
+
+        insert( tp );    
+    }
+
+    // build the tree
+    while( itemCount > 0 ) {
+        if( itemCount == 1 ) {
+            root = removeData();
+            break;
+        }
+
+        struct tree_node *tp1, *tp2;
+        struct tree_node tp3;
+        tp1 = removeData();
+        tp2 = removeData();
+        tp3.ID = ID; ID++;
+        for( i = 0; i < DICT_SIZE; i++ ) {
+            tp3.D[i] = max( tp1->D[i], tp2->D[i] );
+        }
+        tp3.Pl = tp1;
+        tp3.Pr = tp2;
+
+        insert( tp3 );
     }
 
     // write tree to file
     fp = fopen("tree.txt", "w");
     tree2file(fp, root);
+    fclose(fp);
+
+    // write IDF to file for trapdoor
+    fp = fopen("IDF.txt", "w");
+    for( i = 0; i < DICT_SIZE; i++ ) {
+        fprintf(fp, "%d ", IDF[i]);
+    }
     fclose(fp);
 
     return 0;
