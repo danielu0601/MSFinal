@@ -22,6 +22,32 @@ struct tree_node {
     int FID; // pointer to file, use file's ID here
 };
 
+// struct of queue
+struct tree_node *queue[FILE_SIZE];
+int front = 0;
+int rear = -1;
+int itemCount = 0;
+
+void insert(struct tree_node *data) {
+    if( itemCount != FILE_SIZE ) {
+        if(rear == FILE_SIZE-1) {
+            rear = -1;
+        }
+        queue[++rear] = data;
+        itemCount++;
+    }
+}
+
+struct tree_node* removeData() {
+    struct tree_node *data = queue[front++];
+    if(front == FILE_SIZE) {
+        front = 0;
+    }
+    itemCount--;
+    return data;
+}
+
+// write tree to file
 void tree2file( FILE *fp, struct tree_node *root ) {
     if( root == NULL ) 
         return ;
@@ -92,7 +118,7 @@ int main() {
 
     // write tree to file
     fp = fopen("tree.txt", "w");
-    tree2file(fp, &root);
+    tree2file(fp, root);
     fclose(fp);
 
     return 0;
