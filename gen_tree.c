@@ -62,7 +62,7 @@ int main() {
     char tmp2[10];
     int TF[FILE_SIZE][DICT_SIZE], IDF[DICT_SIZE];
     FILE *fp;
-    struct tree_node root;
+    struct tree_node *root;
 
     // for each file
     for( i = 0; i < FILE_SIZE; i++ ) {
