@@ -7,36 +7,28 @@
 #define FILE_SIZE 20
 #define DICT_SIZE 20
 
+/***
+ * This code read the tree from file and do search
+ */
+
+struct tree_node {
+    int ID; // node ID
+    double D[DICT_SIZE]; // index data
+    struct tree_node *Pl; // pointer to left node
+    struct tree_node *Pr; // pointer to right node
+    int FID; // pointer to file, use file's ID here
+};
+
 int main() {
     int i, j;
-    int tmp1;
-    char tmp2[10];
-    char filedata[FILE_SIZE][DICT_SIZE];
+    int TF[FILE_SIZE][DICT_SIZE], IDF[DICT_SIZE];
     FILE *fp;
-
-    // for each file
-    for( i = 0; i < FILE_SIZE; i++ ) {
-        //initial file name
-        char filename[] = "doc/FILE001.txt";
-        sprintf(filename, "doc/FILE%03d.txt", i);
-        fp = fopen(filename, "w");
-
-        // for each keyword in file
-        for( j = 0; j < DICT_SIZE; j++ ) {
-            // read the data to array
-            fscanf("%s %d", tmp2, &tmp1);
-            filedata[i][j] = tmp1;
-        }
-
-        // close file
-        fclose(fp);
-    }
-
-    // analyse the data
-
-    // make the tree
+    struct tree_node root;
 
     // search
+    fp = fopen("tree.txt", "r");
+
+    fclose(fp);
 
     return 0;
 }

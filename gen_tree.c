@@ -7,13 +7,54 @@
 #define FILE_SIZE 20
 #define DICT_SIZE 20
 
+/***
+ * This code generate the tree base on the data generate by gen_data
+ * and store the tree to file.
+ */
+
+// struct of node
 struct tree_node {
     int ID; // node ID
     double D[DICT_SIZE]; // index data
+    struct tree_node *parent; // record parent for easy using
     struct tree_node *Pl; // pointer to left node
     struct tree_node *Pr; // pointer to right node
     int FID; // pointer to file, use file's ID here
 };
+
+void tree2file( FILE *fp, struct tree_node *root ) {
+    if( root == NULL ) 
+        return ;
+    int i;
+
+    // ID 
+    fprintf(fp, "%d ", root->ID);
+    // D
+    for( i = 0; i < DICT_SIZE; i++ ) {
+        fprintf(fp, "%lf ", root->D[i]);
+    }
+    // pointer
+    if ( root->parent == NULL )
+        fprintf(fp, "0 ");
+    else
+        fprintf(fp, "%d ", root->parent->ID);
+    if ( root->Pl == NULL )
+        fprintf(fp, "0 ");
+    else
+        fprintf(fp, "%d ", root->Pl->ID);
+    if ( root->Pr == NULL )
+        fprintf(fp, "0 ");
+    else
+        fprintf(fp, "%d ", root->Pr->ID);
+    // FID
+    fprintf(fp, "%d\n", root->FID);
+
+    // recursive call
+    tree2file(fp, root->Pl);
+    tree2file(fp, root->Pr);
+
+    return ;
+}
 
 int main() {
     int i, j;
@@ -44,12 +85,15 @@ int main() {
         fclose(fp);
     }
 
-    // make the tree
+    // build the tree
     for( i = 0; i < FILE_SIZE; i++ ) {
         
     }
 
-    // search
+    // write tree to file
+    fp = fopen("tree.txt", "w");
+    tree2file(fp, &root);
+    fclose(fp);
 
     return 0;
 }

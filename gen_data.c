@@ -8,6 +8,10 @@
 #define FILE_SIZE 20
 #define DICT_SIZE 20
 
+/***
+ * This code generate the data used in search
+ */
+
 int main() {
     int i, j;
     FILE *fp;
