@@ -94,7 +94,7 @@ int main() {
         //initial file name
         char filename[] = "doc/FILE001.txt";
         sprintf(filename, "doc/FILE%03d.txt", i);
-        fp = fopen(filename, "w");
+        fp = fopen(filename, "r");
 
         // for each keyword in file
         for( j = 0; j < DICT_SIZE; j++ ) {
@@ -102,7 +102,7 @@ int main() {
             fscanf(fp, "%s %d", tmp2, &tmp1);
             TF[i][j] = tmp1;
             if( TF[i][j] > 0 ) {
-                IDF[j];
+                IDF[j]++;
             }
         }
 
@@ -110,13 +110,13 @@ int main() {
         fclose(fp);
     }
 
-    // buold nodes and put into queue
+    // build nodes and put into queue
     for( i = 0; i < FILE_SIZE; i++ ) {
         struct tree_node tp;
 
         tp.ID = ID; ID++;
         for( j = 0; j < DICT_SIZE; j++ ) {
-            //tp.D[j] = ;
+            tp.D[j] = TF[i][j];
         }
         tp.Pl = NULL;
         tp.Pr = NULL;
@@ -154,7 +154,7 @@ int main() {
     // write IDF to file for trapdoor
     fp = fopen("IDF.txt", "w");
     for( i = 0; i < DICT_SIZE; i++ ) {
-        fprintf(fp, "%d ", IDF[i]);
+        fprintf(fp, "%lf ", (double)FILE_SIZE/IDF[i]);
     }
     fclose(fp);
 
