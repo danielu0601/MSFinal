@@ -30,13 +30,14 @@ struct tree_node queue[FILE_SIZE*2];
 int front = 0;
 int rear = -1;
 int itemCount = 0;
-void insert(struct tree_node data) {
+struct tree_node *insert(struct tree_node data) {
     if( itemCount != FILE_SIZE*2 ) {
         if( rear == FILE_SIZE*2-1 )
             rear = -1;
         queue[++rear] = data;
         itemCount++;
     }
+    return &queue[rear];
 }
 struct tree_node *removeData() {
     struct tree_node *data = &queue[front++];
