@@ -76,14 +76,39 @@ struct tree_node *file2tree( FILE *fp ) {
 }
 
 // search function
-void search(struct tree_node *root, int k, double *query) { //query[DICT_SIZE]
-    printf("root = %d\n", root);
-    printf("id = %d\n", root->ID);
+void search(struct tree_node *root, double RList[DICT_SIZE][2], int k, double *query) { //query[DICT_SIZE]
+    // debug
+    //printf("root = %d\n", root);
+    //printf("id = %d\n", root->ID);
+    int i;
+    double result = 0.0;
+    // do dot
+    for (i = 0; i < DICT_SIZE; i++) {
+        result += query[i] * root->D[i];
+    }
+    // divide by node type
     if( root->FID != -1 ) { // leaf node
-        
+        if( result > RList[k-1][1] ) {
+            // put into RList
+            RList[k-1][0] = root->FID;
+            RList[k-1][1] = result;
+            for( i = k-2; i >= 0; i-- ) {
+                if( RList[i][1] < RList[i+1][1] ) {
+                    double tmp;
+                    tmp           = RList[i  ][0];
+                    RList[i  ][0] = RList[i+1][0];
+                    RList[i+1][0] = tmp;
+                    tmp           = RList[i  ][1];
+                    RList[i  ][1] = RList[i+1][1];
+                    RList[i+1][1] = tmp;
+                }
+            }
+        }
     } else { // internal node
-        search(root->Pl, k, query);
-        search(root->Pr, k, query);
+        if( result > RList[k-1][1] ) {
+            search(root->Pl, RList, k, query);
+            search(root->Pr, RList, k, query);
+        }
     }
     return ;
 }
@@ -149,7 +174,7 @@ int main( void ) {
             query[i] /= sum;
         }
         // really do search
-        search(root, k, query);
+        search(root, RList, k, query);
         puts("Reault = ");
         for( i = 0; i < k; i++ ) {
             printf("%3d = %3d\n", i, (int)RList[i][0]);
