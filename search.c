@@ -59,14 +59,33 @@ struct tree_node *file2tree( FILE *fp ) {
     // FID
     fscanf(fp, "%d ", &tn.FID);
     // recursive call
-    tn.Pl = file2tree( fp );
-    tn.Pr = file2tree( fp );
+    if( l != -1 )
+        tn.Pl = file2tree( fp );
+    else
+        tn.Pl = NULL;
+    if( r != -1 )
+        tn.Pr = file2tree( fp );
+    else
+        tn.Pr = NULL;
     // check left and right child's id
     if( (tn.Pl != NULL && l != tn.Pl->ID)
             || (tn.Pr != NULL && r != tn.Pr->ID ) ) {
-        printf("Error at read File%03d from file\n", tn.ID);
+        printf("Error at reading Node %3d from file\n", tn.ID);
     }
     return insert(tn);
+}
+
+// search function
+void search(struct tree_node *root, int k, double *query) { //query[DICT_SIZE]
+    printf("root = %d\n", root);
+    printf("id = %d\n", root->ID);
+    if( root->FID != -1 ) { // leaf node
+        
+    } else { // internal node
+        search(root->Pl, k, query);
+        search(root->Pr, k, query);
+    }
+    return ;
 }
 
 int main( void ) {
@@ -90,26 +109,51 @@ int main( void ) {
 
     // do search
     while( 1 ) {
-        int wordindex = 0;
+        int k, n, wordindex;
         char req[10];
+        double query[DICT_SIZE], sum, RList[FILE_SIZE][2];
+        memset(query, 0, sizeof(query));
+        memset(RList, 0, sizeof(RList));
+        puts("Usage : 'k-top' 'keyword number' 'keyword1' 'keyword2' ...");
+        puts("Example :  5           3             aa         ac      ae");
+
         // read search request
-        scanf("%s", req);
-        // check req format
-        for( i = 0; i < strlen(req); i++ ) {
-            if( !islower(req[i]) ) {
-                wordindex += DICT_SIZE;
+        scanf("%d %d ", &k, &n);
+        printf("%d %d\n", k, n);
+        for( i = 0; i < n; i++ ) {
+            scanf("%s", req);
+            printf("Input = '%s'\n", req);
+            // check req format
+            wordindex = 0;
+            for( j = 0; j < strlen(req); j++ ) {
+                if( !islower(req[j]) ) {
+                    wordindex += DICT_SIZE;
+                    break;
+                }
+                wordindex *= 26;
+                wordindex += req[j] - 'a';
+            }
+            printf("Input %d index = %d\n", i, wordindex);
+            if( wordindex >= DICT_SIZE ) {
+                puts("Input format Error");
                 break;
             }
-            wordindex *= 26;
-            wordindex += req[i] - 'a';
+            query[ wordindex ] = IDF[ wordindex ];
         }
-        printf("%d\n", wordindex);
-        if( wordindex >= DICT_SIZE ) {
-            puts("Input format Error");
-            break;
+        // normalize query vector
+        sum = 0;
+        for( i = 0; i < DICT_SIZE; i++ ) {
+            sum += query[i] * query[i];
         }
-        // do something
-        
+        for( i = 0; i < DICT_SIZE; i++ ) {
+            query[i] /= sum;
+        }
+        // really do search
+        search(root, k, query);
+        puts("Reault = ");
+        for( i = 0; i < k; i++ ) {
+            printf("%3d = %3d\n", i, (int)RList[i][0]);
+        }
     }
 
     return 0;

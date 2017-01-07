@@ -58,11 +58,11 @@ void tree2file( FILE *fp, struct tree_node *root ) {
         fprintf(fp, "%lf ", root->D[i]);
     // pointer
     if( root->Pl == NULL )
-        fprintf(fp, "0 ");
+        fprintf(fp, "-1 ");
     else
         fprintf(fp, "%d ", root->Pl->ID);
     if( root->Pr == NULL )
-        fprintf(fp, "0 ");
+        fprintf(fp, "-1 ");
     else
         fprintf(fp, "%d ", root->Pr->ID);
     // FID
@@ -139,12 +139,7 @@ int main( void ) {
     }
 
     // build the tree
-    while( itemCount > 0 ) {
-        if( itemCount == 1 ) {
-            root = removeData();
-            break;
-        }
-
+    while( itemCount > 1 ) {
         struct tree_node *tp1, *tp2;
         struct tree_node tp3;
         tp1 = removeData();
@@ -155,10 +150,11 @@ int main( void ) {
         }
         tp3.Pl = tp1;
         tp3.Pr = tp2;
-        tp3.FID = 0;
+        tp3.FID = -1;
 
         insert( tp3 );
     }
+    root = removeData();
 
     // write tree to file
     fp = fopen("tree.txt", "w");
