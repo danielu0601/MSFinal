@@ -34,7 +34,7 @@ int main() {
         // for each keyword in file
         for( j = 0; j < DICT_SIZE; j++ ) {
             // initial keyword name
-            char word[2];
+            char word[3] = {0};
             word[0] = 'a' + j / 26;
             word[1] = 'a' + j % 26;
 
