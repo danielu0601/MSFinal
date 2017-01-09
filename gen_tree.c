@@ -12,7 +12,7 @@
  */
 
 // struct of queue
-Node queue[FILE_SIZE*2];
+Node queue[FILE_SIZE*2-1];
 int front = 0;
 int rear = -1;
 int itemCount = 0;
@@ -61,8 +61,7 @@ void tree2file( FILE *fp, Node *root ) {
 
 int main( void ) {
     int i, j, tmp1, ID = 1;
-    char tmp2[10];
-    int TFint[FILE_SIZE][DICT_SIZE], IDFint[DICT_SIZE];
+    char tmp2[8];
     double TF[FILE_SIZE][DICT_SIZE], IDF[DICT_SIZE];
     FILE *fp;
     Node *root;
@@ -70,17 +69,18 @@ int main( void ) {
     // for each file
     for( i = 0; i < FILE_SIZE; i++ ) {
         //initial file name
-        char filename[] = "doc/FILE0001.txt";
-        sprintf(filename, "doc/FILE%04d.txt", i+1);
+        char filename[] = "./doc/FILE0001.txt";
+        sprintf(filename, "./doc/FILE%04d.txt", i+1);
         fp = fopen(filename, "r");
 
         // for each keyword in file
         for( j = 0; j < DICT_SIZE; j++ ) {
             // read data to array and count IDF
             fscanf(fp, "%s %d", tmp2, &tmp1);
-            TFint[i][j] = tmp1;
-            if( TFint[i][j] > 0 ) {
-                IDFint[j]++;
+            TF[i][j] = tmp1;
+            TF[i][j] = tmp1;
+            if( TF[i][j] > 0 ) {
+                IDF[j]++;
             }
         }
 
@@ -91,14 +91,12 @@ int main( void ) {
     // calculate normalized TF and IDF
     for( i = 0; i < FILE_SIZE; i++ ) {
         for( j = 0; j < DICT_SIZE; j++ ) {
-            if( TFint[i][j] == 0 )
-                TF[i][j] = 0;
-            else
-                TF[i][j] = 1 + log( TFint[i][j] );
+            if( TF[i][j] > 0 )
+                TF[i][j] = 1 + log( TF[i][j] );
         }
     }
     for( i = 0; i < DICT_SIZE; i++ ) {
-        IDF[i] = log( 1.0 + (double)FILE_SIZE/IDFint[i] );
+        IDF[i] = log( 1.0 + (double)FILE_SIZE/IDF[i] );
     }
 
     // build nodes and put into queue

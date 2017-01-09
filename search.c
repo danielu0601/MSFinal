@@ -167,7 +167,7 @@ int main( void ) {
         puts("Reault = ");
         for( i = 0; i < k; i++ ) {
             if( RList[i][1] > 0 )
-                printf("Rank%3d = File%04d\n", i+1, (int)RList[i][0]);
+                printf("Rank%3d = File%04d Score = %lf\n", i+1, (int)RList[i][0], RList[i][1]);
             else {
                 puts("No more result");
                 break;
