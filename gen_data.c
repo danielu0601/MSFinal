@@ -4,9 +4,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <time.h>
-
-#define FILE_SIZE 32
-#define DICT_SIZE 32
+#include "define.h"
 
 /***
  * This code generate the data used in search
@@ -27,8 +25,8 @@ int main() {
     // for each file
     for( i = 0; i < FILE_SIZE; i++ ) {
         //initial file name
-        char filename[] = "doc/FILE001.txt";
-        sprintf(filename, "doc/FILE%03d.txt", i+1);
+        char filename[] = "doc/FILE0001.txt";
+        sprintf(filename, "doc/FILE%04d.txt", i+1);
         fp = fopen(filename, "w");
 
         // for each keyword in file
@@ -41,7 +39,7 @@ int main() {
             // generate keyword size, half set to 0
             int a = rand()%(DICT_SIZE*2) - DICT_SIZE;
             if( a < 0 ) a = 0;
-            fprintf(fp, "%s %03d\n", word, a);
+            fprintf(fp, "%s %04d\n", word, a);
         }
 
         // close file

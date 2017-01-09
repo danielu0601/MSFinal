@@ -5,22 +5,11 @@
 #include <unistd.h>
 #include <math.h>
 #include <string.h>
-
-#define FILE_SIZE 32
-#define DICT_SIZE 32
+#include "define.h"
 
 /***
  * This code read the tree from file and do search
  */
-
-// struct of node
-typedef struct tree_node {
-    int ID; // node ID
-    double D[DICT_SIZE]; // index data
-    struct tree_node *Pl; // pointer to left node
-    struct tree_node *Pr; // pointer to right node
-    int FID; // pointer to file, use file's ID here
-} Node;
 
 // struct of queue
 Node queue[FILE_SIZE*2];
@@ -178,7 +167,7 @@ int main( void ) {
         puts("Reault = ");
         for( i = 0; i < k; i++ ) {
             if( RList[i][1] > 0 )
-                printf("Rank%3d = File%03d\n", i+1, (int)RList[i][0]);
+                printf("Rank%3d = File%04d\n", i+1, (int)RList[i][0]);
             else {
                 puts("No more result");
                 break;

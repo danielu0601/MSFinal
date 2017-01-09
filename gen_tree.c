@@ -4,26 +4,12 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <math.h>
-
-#define FILE_SIZE 32
-#define DICT_SIZE 32
+#include "define.h"
 
 /***
  * This code generate the tree base on the data generate by gen_data
  * and store the tree to file.
  */
-
-// struct of node
-typedef struct tree_node {
-    int ID; // node ID
-    double D[DICT_SIZE]; // index data
-    struct tree_node *Pl; // pointer to left node
-    struct tree_node *Pr; // pointer to right node
-    int FID; // pointer to file, use file's ID here
-} Node;
-
-// max function
-double max( double a, double b ){ return (a>b)?a:b; }
 
 // struct of queue
 Node queue[FILE_SIZE*2];
@@ -84,8 +70,8 @@ int main( void ) {
     // for each file
     for( i = 0; i < FILE_SIZE; i++ ) {
         //initial file name
-        char filename[] = "doc/FILE001.txt";
-        sprintf(filename, "doc/FILE%03d.txt", i+1);
+        char filename[] = "doc/FILE0001.txt";
+        sprintf(filename, "doc/FILE%04d.txt", i+1);
         fp = fopen(filename, "r");
 
         // for each keyword in file
@@ -123,7 +109,7 @@ int main( void ) {
             TFsum += TF[i][j] * TF[i][j];
         }
         if( TFsum == 0 ) {
-            printf("Error : There is no keyword in FILE%03d\n", i);
+            printf("Error : There is no keyword in FILE%04d\n", i);
             return -1;
         }
 
