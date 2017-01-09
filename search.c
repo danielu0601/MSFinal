@@ -6,28 +6,28 @@
 #include <math.h>
 #include <string.h>
 
-#define FILE_SIZE 20
-#define DICT_SIZE 20
+#define FILE_SIZE 32
+#define DICT_SIZE 32
 
 /***
  * This code read the tree from file and do search
  */
 
 // struct of node
-struct tree_node {
+typedef struct tree_node {
     int ID; // node ID
     double D[DICT_SIZE]; // index data
     struct tree_node *Pl; // pointer to left node
     struct tree_node *Pr; // pointer to right node
     int FID; // pointer to file, use file's ID here
-};
+} Node;
 
 // struct of queue
-struct tree_node queue[FILE_SIZE*2];
+Node queue[FILE_SIZE*2];
 int front = 0;
 int rear = -1;
 int itemCount = 0;
-struct tree_node *insert(struct tree_node data) {
+Node *insert(Node data) {
     if( itemCount != FILE_SIZE*2 ) {
         if( rear == FILE_SIZE*2-1 )
             rear = -1;
@@ -36,8 +36,8 @@ struct tree_node *insert(struct tree_node data) {
     }
     return &queue[rear];
 }
-struct tree_node *removeData() {
-    struct tree_node *data = &queue[front++];
+Node *removeData() {
+    Node *data = &queue[front++];
     if( front == FILE_SIZE*2 )
         front = 0;
     itemCount--;
@@ -45,10 +45,10 @@ struct tree_node *removeData() {
 }
 
 // read tree from file
-struct tree_node *file2tree( FILE *fp ) {
+Node *file2tree( FILE *fp ) {
     if( feof(fp) != 0 ) return NULL;
     int i, l, r;
-    struct tree_node tn;
+    Node tn;
     // ID 
     fscanf(fp, "%d ", &tn.ID);
     // D
@@ -76,7 +76,7 @@ struct tree_node *file2tree( FILE *fp ) {
 }
 
 // search function
-void search(struct tree_node *root, double RList[DICT_SIZE][2], int k, double *query) { //query[DICT_SIZE]
+void search(Node *root, double RList[DICT_SIZE][2], int k, double *query) { //query[DICT_SIZE]
     // debug
     //printf("root = %d\n", root);
     //printf("id = %d\n", root->ID);
@@ -117,7 +117,7 @@ int main( void ) {
     int i, j;
     double TF[FILE_SIZE][DICT_SIZE], IDF[DICT_SIZE];
     FILE *fp;
-    struct tree_node *root;
+    Node *root;
 
     // read tree from file
     fp = fopen("tree.txt", "r");
@@ -177,7 +177,12 @@ int main( void ) {
         search(root, RList, k, query);
         puts("Reault = ");
         for( i = 0; i < k; i++ ) {
-            printf("%3d = %3d\n", i, (int)RList[i][0]);
+            if( RList[i][1] > 0 )
+                printf("Rank%3d = File%03d\n", i+1, (int)RList[i][0]);
+            else {
+                puts("No more result");
+                break;
+            }
         }
     }
 

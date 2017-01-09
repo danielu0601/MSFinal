@@ -7,4 +7,6 @@ tree: gen_tree.c
 search: search.c
 	gcc search.c -o search
 clean:
-	
+	rm doc/*
+	rm tree.txt
+	rm IDF.txt

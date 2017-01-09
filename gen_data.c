@@ -5,8 +5,8 @@
 #include <unistd.h>
 #include <time.h>
 
-#define FILE_SIZE 20
-#define DICT_SIZE 20
+#define FILE_SIZE 32
+#define DICT_SIZE 32
 
 /***
  * This code generate the data used in search
@@ -28,13 +28,13 @@ int main() {
     for( i = 0; i < FILE_SIZE; i++ ) {
         //initial file name
         char filename[] = "doc/FILE001.txt";
-        sprintf(filename, "doc/FILE%03d.txt", i);
+        sprintf(filename, "doc/FILE%03d.txt", i+1);
         fp = fopen(filename, "w");
 
         // for each keyword in file
         for( j = 0; j < DICT_SIZE; j++ ) {
             // initial keyword name
-            char word[3] = {0};
+            char word[] = "aa";
             word[0] = 'a' + j / 26;
             word[1] = 'a' + j % 26;
 
