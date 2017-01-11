@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -12,15 +13,15 @@
  */
 
 // struct of queue
-Node queue[FILE_SIZE*2-1];
+Node queue[FILE_SIZE*2];
 int front = 0;
 int rear = -1;
 int itemCount = 0;
-Node *insert(Node data) {
+Node *insert(Node *data) {
     if( itemCount != FILE_SIZE*2 ) {
         if( rear == FILE_SIZE*2-1 )
             rear = -1;
-        queue[++rear] = data;
+        queue[++rear] = *data;
         itemCount++;
     }
     return &queue[rear];
@@ -59,18 +60,19 @@ void tree2file( FILE *fp, Node *root ) {
     return ;
 }
 
+double TF[FILE_SIZE][DICT_SIZE], IDF[DICT_SIZE];
 int main( void ) {
     int i, j, tmp1, ID = 1;
     char tmp2[8];
-    double TF[FILE_SIZE][DICT_SIZE], IDF[DICT_SIZE];
     FILE *fp;
     Node *root;
 
     // for each file
     for( i = 0; i < FILE_SIZE; i++ ) {
         //initial file name
-        char filename[] = "./doc/FILE0001.txt";
-        sprintf(filename, "./doc/FILE%04d.txt", i+1);
+        char filename[] = FILE_PATH;
+        char *ptr = strstr(filename, "FILE");
+        sprintf(ptr, "FILE%04d.txt", i+1);
         fp = fopen(filename, "r");
 
         // for each keyword in file
@@ -120,7 +122,7 @@ int main( void ) {
         tp.Pr = NULL;
         tp.FID = i+1;
 
-        insert( tp );    
+        insert( &tp );
     }
 
     // build the tree
@@ -138,7 +140,7 @@ int main( void ) {
         tp3.Pr = tp2;
         tp3.FID = -1;
 
-        insert( tp3 );
+        insert( &tp3 );
     }
     root = removeData();
 

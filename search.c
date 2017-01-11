@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <math.h>
-#include <string.h>
 #include "define.h"
 
 /***
- * This code read the tree from file and do search
+ * This code read the tree from file and do search.
  */
 
 // struct of queue
@@ -16,11 +16,11 @@ Node queue[FILE_SIZE*2];
 int front = 0;
 int rear = -1;
 int itemCount = 0;
-Node *insert(Node data) {
+Node *insert(Node *data) {
     if( itemCount != FILE_SIZE*2 ) {
         if( rear == FILE_SIZE*2-1 )
             rear = -1;
-        queue[++rear] = data;
+        queue[++rear] = *data;
         itemCount++;
     }
     return &queue[rear];
@@ -61,7 +61,7 @@ Node *file2tree( FILE *fp ) {
             || (tn.Pr != NULL && r != tn.Pr->ID ) ) {
         printf("Error at reading Node %3d from file\n", tn.ID);
     }
-    return insert(tn);
+    return insert(&tn);
 }
 
 // search function

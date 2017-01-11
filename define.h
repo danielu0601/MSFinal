@@ -3,8 +3,9 @@
  */
 
 // MAX 1547 now
-#define FILE_SIZE 512
+#define FILE_SIZE 4096
 #define DICT_SIZE 676
+#define FILE_PATH "./doc/FILE0001.txt"
 
 // struct of node
 typedef struct tree_node {

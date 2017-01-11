@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -25,8 +26,9 @@ int main() {
     // for each file
     for( i = 0; i < FILE_SIZE; i++ ) {
         //initial file name
-        char filename[] = "doc/FILE0001.txt";
-        sprintf(filename, "doc/FILE%04d.txt", i+1);
+        char filename[] = FILE_PATH;
+        char *ptr = strstr(filename, "FILE");
+        sprintf(ptr, "FILE%04d.txt", i+1);
         fp = fopen(filename, "w");
 
         // for each keyword in file
