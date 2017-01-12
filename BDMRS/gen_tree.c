@@ -5,12 +5,20 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <math.h>
+#include <time.h>
 #include "define.h"
 
 /***
  * This code generate the tree base on the data generate by gen_data
  * and store the tree to file.
  */
+
+// File data tmp
+double TF[FILE_SIZE][DICT_SIZE], IDF[DICT_SIZE];
+int SK[DICT_SIZE]; // secret key
+double M[2][DICT_SIZE][DICT_SIZE];
+double Dtmp[DICT_SIZE];
+double D[2][DICT_SIZE];
 
 // struct of queue
 Node queue[FILE_SIZE*2];
@@ -41,8 +49,10 @@ void tree2file( FILE *fp, Node *root ) {
     // ID 
     fprintf(fp, "%d ", root->ID);
     // D
-    for( i = 0; i < DICT_SIZE; i++ )
-        fprintf(fp, "%lf ", root->D[i]);
+    for( i = 0; i < DICT_SIZE; i++ ) {
+        fprintf(fp, "%lf ", root->D[0][i]);
+        fprintf(fp, "%lf ", root->D[1][i]);
+    }
     // pointer
     if( root->Pl == NULL )
         fprintf(fp, "-1 ");
@@ -60,12 +70,31 @@ void tree2file( FILE *fp, Node *root ) {
     return ;
 }
 
-double TF[FILE_SIZE][DICT_SIZE], IDF[DICT_SIZE];
 int main( void ) {
-    int i, j, tmp1, ID = 1;
+    int i, j, k, tmp1, ID = 1;
     char tmp2[8];
     FILE *fp;
     Node *root;
+
+    srand( time(NULL) );
+    // generate secret key and save to file
+    fp = fopen(SK_PATH, "w");
+    for( i = 0; i < DICT_SIZE; i++ ) {
+        SK[i] = rand()%2;
+        fprintf(fp, "%d ", SK[i]);
+    }
+    fclose(fp);
+
+    // read Matrixs from file
+    fp = fopen(MATRIX_PATH, "r");
+    for( k = 0; k < 2; k++ ) {
+        for( i = 0; i < DICT_SIZE; i++ ) {
+            for( j = 0; j < DICT_SIZE; j++ ) {
+                fscanf(fp, "%lf ", &M[k][i][j]);
+            }
+        }
+    }
+    fclose(fp);
 
     // for each file
     for( i = 0; i < FILE_SIZE; i++ ) {
@@ -115,9 +144,26 @@ int main( void ) {
 
         tp.ID = ID;
         ID++;
+        /* parts mainly changed in BDMRS */
         for( j = 0; j < DICT_SIZE; j++ ) {
-            tp.D[j] = TF[i][j]/TFsum;
+            Dtmp[j] = TF[i][j]/TFsum;
+            if( SK[j] == 0 ) {
+                D[0][j] = Dtmp[j];
+                D[1][j] = Dtmp[j];
+            } else {
+                D[0][j] = Dtmp[j]*rand()/rand();
+                D[1][j] = Dtmp[j] - D[0][j];
+            }
         }
+        for( j = 0; j < DICT_SIZE; j++ ) {
+            tp.D[0][j] = 0;
+            tp.D[1][j] = 1;
+            for( k = 0; k < DICT_SIZE; k++ ) {
+                tp.D[0][j] += M[0][j][k] * D[0][k];
+                tp.D[1][j] += M[1][j][k] * D[1][k];
+            }
+        }
+        /*************************/
         tp.Pl = NULL;
         tp.Pr = NULL;
         tp.FID = i+1;
@@ -134,7 +180,8 @@ int main( void ) {
         tp3.ID = ID;
         ID++;
         for( i = 0; i < DICT_SIZE; i++ ) {
-            tp3.D[i] = max( tp1->D[i], tp2->D[i] );
+            tp3.D[0][i] = max( tp1->D[0][i], tp2->D[0][i] );
+            tp3.D[1][i] = max( tp1->D[1][i], tp2->D[1][i] );
         }
         tp3.Pl = tp1;
         tp3.Pr = tp2;

@@ -5,11 +5,20 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <math.h>
+#include <time.h>
 #include "define.h"
 
 /***
  * This code read the tree from file and do search.
  */
+
+double TF[FILE_SIZE][DICT_SIZE], IDF[DICT_SIZE];
+double querytmp[DICT_SIZE];
+double querytmp2[2][DICT_SIZE];
+double query[2][DICT_SIZE];
+double RList[FILE_SIZE][2];
+double M[2][DICT_SIZE][DICT_SIZE];
+int SK[DICT_SIZE];
 
 // struct of queue
 Node queue[FILE_SIZE*2];
@@ -41,8 +50,10 @@ Node *file2tree( FILE *fp ) {
     // ID 
     fscanf(fp, "%d ", &tn.ID);
     // D
-    for( i = 0; i < DICT_SIZE; i++ )
-        fscanf(fp, "%lf ", &tn.D[i]);
+    for( i = 0; i < DICT_SIZE; i++ ) {
+        fscanf(fp, "%lf ", &tn.D[0][i]);
+        fscanf(fp, "%lf ", &tn.D[1][i]);
+    }
     // pointer
     fscanf(fp, "%d %d ", &l, &r);
     // FID
@@ -65,7 +76,8 @@ Node *file2tree( FILE *fp ) {
 }
 
 // search function
-void search(Node *root, double RList[DICT_SIZE][2], int k, double *query) { //query[DICT_SIZE]
+void search(Node *root, double RList[DICT_SIZE][2], int k) { //query[2][DICT_SIZE]
+//void search(Node *root, double RList[DICT_SIZE][2], int k, double *query) { //query[2][DICT_SIZE]
     // debug
     //printf("root = %d\n", root);
     //printf("id = %d\n", root->ID);
@@ -73,7 +85,8 @@ void search(Node *root, double RList[DICT_SIZE][2], int k, double *query) { //qu
     double result = 0.0;
     // do dot
     for (i = 0; i < DICT_SIZE; i++) {
-        result += query[i] * root->D[i];
+        result += query[0][i] * root->D[0][i];
+        result += query[1][i] * root->D[1][i];
     }
     // divide by node type
     if( root->FID != -1 ) { // leaf node
@@ -95,8 +108,8 @@ void search(Node *root, double RList[DICT_SIZE][2], int k, double *query) { //qu
         }
     } else { // internal node
         if( result > RList[k-1][1] ) {
-            search(root->Pl, RList, k, query);
-            search(root->Pr, RList, k, query);
+            search(root->Pl, RList, k);
+            search(root->Pr, RList, k);
         }
     }
     return ;
@@ -104,9 +117,26 @@ void search(Node *root, double RList[DICT_SIZE][2], int k, double *query) { //qu
 
 int main( void ) {
     int i, j;
-    double TF[FILE_SIZE][DICT_SIZE], IDF[DICT_SIZE];
     FILE *fp;
     Node *root;
+
+    srand( time(NULL) );
+    // read SK from file
+    fp = fopen(SK_PATH, "r");
+    for( i = 0; i < DICT_SIZE; i++ ) {
+        fscanf(fp, "%d ", &SK[i]);
+    }
+    fclose(fp);
+
+    // read inv M from file
+    fp = fopen(MATRIXinv_PATH, "r");
+    for( i = 0; i < DICT_SIZE; i++ ) {
+        for( j = 0; j < DICT_SIZE; j++ ) {
+            fscanf(fp, "%lf ", &M[0][i][j]);
+            fscanf(fp, "%lf ", &M[1][i][j]);
+        }
+    }
+    fclose(fp);
 
     // read tree from file
     fp = fopen("tree.txt", "r");
@@ -125,7 +155,7 @@ int main( void ) {
     while( 1 ) {
         int k, n, wordindex;
         char req[10];
-        double query[DICT_SIZE], sum, RList[FILE_SIZE][2];
+        double sum;
         memset(query, 0, sizeof(query));
         memset(RList, 0, sizeof(RList));
         puts("Usage : 'k-top' 'keyword number' 'keyword1' 'keyword2' ...");
@@ -152,18 +182,43 @@ int main( void ) {
                 puts("Input format Error");
                 break;
             }
-            query[ wordindex ] = IDF[ wordindex ];
+            querytmp[ wordindex ] = IDF[ wordindex ];
         }
+
         // normalize query vector
         sum = 0;
         for( i = 0; i < DICT_SIZE; i++ ) {
-            sum += query[i] * query[i];
+            sum += querytmp[i] * querytmp[i];
         }
         for( i = 0; i < DICT_SIZE; i++ ) {
-            query[i] /= sum;
+            querytmp[i] /= sum;
         }
+
+        /* Changed part in BDMRS */
+        // 
+        for( i = 0; i < DICT_SIZE; i++ ) {
+            if( SK[i] == 0 ) {
+                querytmp2[0][i] = querytmp[i] *rand()/rand();
+                querytmp2[1][i] = querytmp[i] - query[0][i];
+            } else {
+                querytmp2[0][i] = querytmp[i];
+                querytmp2[1][i] = querytmp[i];
+            }
+        }
+        for( i = 0; i < DICT_SIZE; i++ ) {
+            query[0][i] = 0;
+            query[1][i] = 0;
+            for( j = 0; j < DICT_SIZE; j++ ) {
+                query[0][i] += M[0][i][j] * querytmp2[0][j];
+                query[1][i] += M[1][i][j] * querytmp2[1][j];
+            }
+            printf("%lf %lf\n", query[0][i], query[1][i] );
+        }
+        /*************************/
+
         // really do search
-        search(root, RList, k, query);
+        //search(root, RList, k, query);
+        search(root, RList, k);
         puts("Reault = ");
         for( i = 0; i < k; i++ ) {
             if( RList[i][1] > 0 )

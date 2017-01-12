@@ -2,10 +2,9 @@
  * This code .h file define size and struct used.
  */
 
-// MAX 1547 now
-#define FILE_SIZE 4096
-#define DICT_SIZE 676
-#define FILE_PATH "./doc/FILE0001.txt"
+#define FILE_SIZE 32
+#define DICT_SIZE 26
+#define FILE_PATH "../doc/FILE0001.txt"
 
 // struct of node
 typedef struct tree_node {

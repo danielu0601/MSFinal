@@ -7,5 +7,5 @@ tree: gen_tree.c define.h
 search: search.c define.h
 	gcc search.c   -O2 -o search
 clean:
-	rm doc/*
+	rm ../doc/*
 	rm *.txt

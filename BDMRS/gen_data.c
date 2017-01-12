@@ -17,7 +17,7 @@ int main() {
     struct stat st = {0};
 
     // initial the random seed
-    srand(time(NULL));
+    srand( time(NULL) );
     // if no dir "doc", creat it
     if (stat("./doc", &st) == -1) {
         mkdir("./doc", 0700);

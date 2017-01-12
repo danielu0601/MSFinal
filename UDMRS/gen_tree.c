@@ -12,6 +12,9 @@
  * and store the tree to file.
  */
 
+// File data tmp
+double TF[FILE_SIZE][DICT_SIZE], IDF[DICT_SIZE];
+
 // struct of queue
 Node queue[FILE_SIZE*2];
 int front = 0;
@@ -60,7 +63,6 @@ void tree2file( FILE *fp, Node *root ) {
     return ;
 }
 
-double TF[FILE_SIZE][DICT_SIZE], IDF[DICT_SIZE];
 int main( void ) {
     int i, j, tmp1, ID = 1;
     char tmp2[8];
