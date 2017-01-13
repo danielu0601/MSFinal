@@ -116,7 +116,7 @@ void search(Node *root, double RList[DICT_SIZE][2], int k) { //query[2][DICT_SIZ
 }
 
 int main( void ) {
-    int i, j;
+    int i, j, k;
     FILE *fp;
     Node *root;
 
@@ -130,10 +130,11 @@ int main( void ) {
 
     // read inv M from file
     fp = fopen(MATRIXinv_PATH, "r");
-    for( i = 0; i < DICT_SIZE; i++ ) {
-        for( j = 0; j < DICT_SIZE; j++ ) {
-            fscanf(fp, "%lf ", &M[0][i][j]);
-            fscanf(fp, "%lf ", &M[1][i][j]);
+    for( k = 0; k < 2; k++ ) {
+        for( i = 0; i < DICT_SIZE; i++ ) {
+            for( j = 0; j < DICT_SIZE; j++ ) {
+                fscanf(fp, "%lf ", &M[k][i][j]);
+            }
         }
     }
     fclose(fp);
