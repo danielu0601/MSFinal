@@ -109,7 +109,6 @@ int main( void ) {
             // read data to array and count IDF
             fscanf(fp, "%s %d", tmp2, &tmp1);
             TF[i][j] = tmp1;
-            TF[i][j] = tmp1;
             if( TF[i][j] > 0 ) {
                 IDF[j]++;
             }
@@ -151,13 +150,13 @@ int main( void ) {
                 D[0][j] = Dtmp[j];
                 D[1][j] = Dtmp[j];
             } else {
-                D[0][j] = Dtmp[j]*rand()/rand();
+                D[0][j] = Dtmp[j] *rand()/rand();
                 D[1][j] = Dtmp[j] - D[0][j];
             }
         }
         for( j = 0; j < DICT_SIZE; j++ ) {
             tp.D[0][j] = 0;
-            tp.D[1][j] = 1;
+            tp.D[1][j] = 0;
             for( k = 0; k < DICT_SIZE; k++ ) {
                 tp.D[0][j] += M[0][j][k] * D[0][k];
                 tp.D[1][j] += M[1][j][k] * D[1][k];

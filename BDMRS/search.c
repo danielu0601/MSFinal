@@ -116,7 +116,9 @@ void search(Node *root, double RList[DICT_SIZE][2], int k) { //query[2][DICT_SIZ
 }
 
 int main( void ) {
-    int i, j, k;
+    int i, j, k, n, wordindex;
+    char req[10];
+    double sum;
     FILE *fp;
     Node *root;
 
@@ -150,24 +152,19 @@ int main( void ) {
         fscanf(fp, "%lf ", &IDF[i]);
     }
     fclose(fp);
-    puts("Finish reading from file.");
+    puts("\n\n*** Finish reading from file. ***\n\n");
 
     // do search
     while( 1 ) {
-        int k, n, wordindex;
-        char req[10];
-        double sum;
-        memset(query, 0, sizeof(query));
+        memset(query, 0, sizeof(querytmp));
         memset(RList, 0, sizeof(RList));
         puts("Usage : 'k-top' 'keyword number' 'keyword1' 'keyword2' ...");
         puts("Example :  5           3             aa         ac      ae");
 
         // read search request
         scanf("%d %d ", &k, &n);
-        printf("%d %d\n", k, n);
         for( i = 0; i < n; i++ ) {
             scanf("%s", req);
-            printf("Input = '%s'\n", req);
             // check req format
             wordindex = 0;
             for( j = 0; j < strlen(req); j++ ) {
@@ -178,7 +175,7 @@ int main( void ) {
                 wordindex *= 26;
                 wordindex += req[j] - 'a';
             }
-            printf("Input %d index = %d\n", i, wordindex);
+            printf("\tInput %d = '%s'\tindex = %d\n", i, req, wordindex);
             if( wordindex >= DICT_SIZE ) {
                 puts("Input format Error");
                 break;
@@ -200,7 +197,7 @@ int main( void ) {
         for( i = 0; i < DICT_SIZE; i++ ) {
             if( SK[i] == 0 ) {
                 querytmp2[0][i] = querytmp[i] *rand()/rand();
-                querytmp2[1][i] = querytmp[i] - query[0][i];
+                querytmp2[1][i] = querytmp[i] - querytmp2[0][i];
             } else {
                 querytmp2[0][i] = querytmp[i];
                 querytmp2[1][i] = querytmp[i];
@@ -213,22 +210,23 @@ int main( void ) {
                 query[0][i] += M[0][i][j] * querytmp2[0][j];
                 query[1][i] += M[1][i][j] * querytmp2[1][j];
             }
-            printf("%lf %lf\n", query[0][i], query[1][i] );
+            //printf("query[:][%d] = %lf %lf\n", i, query[0][i], query[1][i] );
         }
         /*************************/
 
         // really do search
         //search(root, RList, k, query);
         search(root, RList, k);
-        puts("Reault = ");
+        puts("\n\nReaults = ");
         for( i = 0; i < k; i++ ) {
             if( RList[i][1] > 0 )
-                printf("Rank%3d = File%04d Score = %lf\n", i+1, (int)RList[i][0], RList[i][1]);
+                printf("\tRank%3d = File%04d Score = %lf\n", i+1, (int)RList[i][0], RList[i][1]);
             else {
                 puts("No more result");
                 break;
             }
         }
+        puts("\n\n\n\n");
     }
 
     return 0;

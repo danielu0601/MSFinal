@@ -119,7 +119,7 @@ int main( void ) {
         fscanf(fp, "%lf ", &IDF[i]);
     }
     fclose(fp);
-    puts("Finish reading from file.");
+    puts("\n\n*** Finish reading from file. ***\n\n");
 
     // do search
     while( 1 ) {
@@ -133,10 +133,8 @@ int main( void ) {
 
         // read search request
         scanf("%d %d ", &k, &n);
-        printf("%d %d\n", k, n);
         for( i = 0; i < n; i++ ) {
             scanf("%s", req);
-            printf("Input = '%s'\n", req);
             // check req format
             wordindex = 0;
             for( j = 0; j < strlen(req); j++ ) {
@@ -147,7 +145,7 @@ int main( void ) {
                 wordindex *= 26;
                 wordindex += req[j] - 'a';
             }
-            printf("Input %d index = %d\n", i, wordindex);
+            printf("\tInput %d = '%s'\tindex = %d\n", i, req, wordindex);
             if( wordindex >= DICT_SIZE ) {
                 puts("Input format Error");
                 break;
@@ -164,15 +162,16 @@ int main( void ) {
         }
         // really do search
         search(root, RList, k, query);
-        puts("Reault = ");
+        puts("\n\nReaults = ");
         for( i = 0; i < k; i++ ) {
             if( RList[i][1] > 0 )
-                printf("Rank%3d = File%04d Score = %lf\n", i+1, (int)RList[i][0], RList[i][1]);
+                printf("\tRank%3d = File%04d Score = %lf\n", i+1, (int)RList[i][0], RList[i][1]);
             else {
                 puts("No more result");
                 break;
             }
         }
+        puts("\n\n\n\n");
     }
 
     return 0;

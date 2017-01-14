@@ -82,7 +82,6 @@ int main( void ) {
             // read data to array and count IDF
             fscanf(fp, "%s %d", tmp2, &tmp1);
             TF[i][j] = tmp1;
-            TF[i][j] = tmp1;
             if( TF[i][j] > 0 ) {
                 IDF[j]++;
             }
