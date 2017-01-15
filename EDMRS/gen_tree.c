@@ -15,16 +15,14 @@
 
 // File data tmp
 double TF[FILE_SIZE][DICT_SIZE], IDF[DICT_SIZE];
-int SK[DICT_SIZE]; // secret key
 double M[2][DICT_SIZE+PHAN_SIZE][DICT_SIZE+PHAN_SIZE];
-double Dtmp[DICT_SIZE+PHAN_SIZE];
 double D[2][DICT_SIZE+PHAN_SIZE];
+double Dtmp[DICT_SIZE+PHAN_SIZE];
+int SK[DICT_SIZE]; // secret key
 
 // struct of queue
 Node queue[FILE_SIZE*2];
-int front = 0;
-int rear = -1;
-int itemCount = 0;
+int front = 0, rear = -1, itemCount = 0;
 Node *insert(Node *data) {
     if( itemCount != FILE_SIZE*2 ) {
         if( rear == FILE_SIZE*2-1 )
@@ -103,7 +101,6 @@ int main( void ) {
         char *ptr = strstr(filename, "FILE");
         sprintf(ptr, "FILE%04d.txt", i+1);
         fp = fopen(filename, "r");
-
         // for each keyword in file
         for( j = 0; j < DICT_SIZE; j++ ) {
             // read data to array and count IDF
@@ -113,7 +110,6 @@ int main( void ) {
                 IDF[j]++;
             }
         }
-
         // close file
         fclose(fp);
     }
@@ -133,14 +129,13 @@ int main( void ) {
     for( i = 0; i < FILE_SIZE; i++ ) {
         Node tp;
         double TFsum = 0;
-        for( j = 0; j < DICT_SIZE; j++ ) {
+        for( j = 0; j < DICT_SIZE; j++ )
             TFsum += TF[i][j] * TF[i][j];
-        }
+        TFsum = sqrt(TFsum);
         if( TFsum == 0 ) {
             printf("Error : There is no keyword in FILE%04d\n", i);
             return -1;
         }
-        TFsum = sqrt(TFsum);
 
         tp.ID = ID;
         ID++;
@@ -156,9 +151,8 @@ int main( void ) {
             }
         }
         for( j = DICT_SIZE; j < DICT_SIZE+PHAN_SIZE; j++ ) {
-            D[0][j] = 0.00003*( ((double)rand()/RAND_MAX)*2-1 );
-            D[1][j] = 0.00003*( ((double)rand()/RAND_MAX)*2-1 );
-//            printf("%lf %lf\n", D[0][j], D[1][j]);
+            D[0][j] = 0.001*( ((double)rand()/RAND_MAX)*2-1 );
+            D[1][j] = 0.001*( ((double)rand()/RAND_MAX)*2-1 );
         }
         for( j = 0; j < DICT_SIZE+PHAN_SIZE; j++ ) {
             tp.D[0][j] = 0;

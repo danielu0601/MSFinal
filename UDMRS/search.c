@@ -16,9 +16,7 @@ double query[DICT_SIZE], RList[FILE_SIZE][2];
 
 // struct of queue
 Node queue[FILE_SIZE*2];
-int front = 0;
-int rear = -1;
-int itemCount = 0;
+int front = 0, rear = -1, itemCount = 0;
 Node *insert(Node *data) {
     if( itemCount != FILE_SIZE*2 ) {
         if( rear == FILE_SIZE*2-1 )
@@ -155,15 +153,16 @@ int main( void ) {
         for( i = 0; i < DICT_SIZE; i++ ) {
             sum += query[i] * query[i];
         }
+        sum = sqrt( sum );
         for( i = 0; i < DICT_SIZE; i++ ) {
             query[i] /= sum;
         }
         // really do search
         search(root, RList, k);
-        puts("\n\nReaults = ");
+        puts("\n\nResults = ");
         for( i = 0; i < k; i++ ) {
             if( RList[i][1] > 0 )
-                printf("\tRank%3d = File%04d Score = %lf\n", i+1, (int)RList[i][0], RList[i][1]);
+                printf("\tRank%3d = File%4d Score = %lf\n", i+1, (int)RList[i][0], RList[i][1]);
             else {
                 puts("No more result");
                 break;

@@ -41,7 +41,7 @@ int main() {
             // generate keyword size, half set to 0
             int a = rand()%(DICT_SIZE*2) - DICT_SIZE;
             if( a < 0 ) a = 0;
-            fprintf(fp, "%s %04d\n", word, a);
+            fprintf(fp, "%s %d\n", word, a);
         }
 
         // close file

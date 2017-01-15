@@ -13,18 +13,16 @@
  */
 
 double TF[FILE_SIZE][DICT_SIZE], IDF[DICT_SIZE];
+double query[2][DICT_SIZE+PHAN_SIZE];
 double querytmp[DICT_SIZE+PHAN_SIZE];
 double querytmp2[2][DICT_SIZE+PHAN_SIZE];
-double query[2][DICT_SIZE+PHAN_SIZE];
 double RList[FILE_SIZE][2];
 double M[2][DICT_SIZE+PHAN_SIZE][DICT_SIZE+PHAN_SIZE];
 int SK[DICT_SIZE];
 
 // struct of queue
 Node queue[FILE_SIZE*2];
-int front = 0;
-int rear = -1;
-int itemCount = 0;
+int front = 0, rear = -1, itemCount = 0;
 Node *insert(Node *data) {
     if( itemCount != FILE_SIZE*2 ) {
         if( rear == FILE_SIZE*2-1 )
@@ -211,7 +209,6 @@ int main( void ) {
                 query[0][i] += M[0][i][j] * querytmp2[0][j];
                 query[1][i] += M[1][i][j] * querytmp2[1][j];
             }
-            //printf("query[:][%d] = %lf %lf\n", i, query[0][i], query[1][i] );
         }
         /*************************/
 
@@ -221,7 +218,7 @@ int main( void ) {
         puts("\n\nReaults = ");
         for( i = 0; i < k; i++ ) {
             if( RList[i][1] > 0 )
-                printf("\tRank%3d = File%04d Score = %lf\n", i+1, (int)RList[i][0], RList[i][1]);
+                printf("\tRank%3d = File%4d Score = %lf\n", i+1, (int)RList[i][0], RList[i][1]);
             else {
                 puts("No more result");
                 break;

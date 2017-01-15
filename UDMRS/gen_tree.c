@@ -17,9 +17,7 @@ double TF[FILE_SIZE][DICT_SIZE], IDF[DICT_SIZE];
 
 // struct of queue
 Node queue[FILE_SIZE*2];
-int front = 0;
-int rear = -1;
-int itemCount = 0;
+int front = 0, rear = -1, itemCount = 0;
 Node *insert(Node *data) {
     if( itemCount != FILE_SIZE*2 ) {
         if( rear == FILE_SIZE*2-1 )
@@ -106,9 +104,9 @@ int main( void ) {
     for( i = 0; i < FILE_SIZE; i++ ) {
         Node tp;
         double TFsum = 0;
-        for( j = 0; j < DICT_SIZE; j++ ) {
+        for( j = 0; j < DICT_SIZE; j++ )
             TFsum += TF[i][j] * TF[i][j];
-        }
+        TFsum = sqrt(TFsum);
         if( TFsum == 0 ) {
             printf("Error : There is no keyword in FILE%04d\n", i);
             return -1;

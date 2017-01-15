@@ -17,7 +17,6 @@
 typedef struct tree_node {
     int ID; // node ID
     double D[2][DICT_SIZE+PHAN_SIZE]; // index data
-//    double D[2][DICT_SIZE]; // index data
     struct tree_node *Pl; // pointer to left node
     struct tree_node *Pr; // pointer to right node
     int FID; // pointer to file, use file's ID here
