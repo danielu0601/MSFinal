@@ -76,11 +76,7 @@ Node *file2tree( FILE *fp ) {
 }
 
 // search function
-void search(Node *root, double RList[DICT_SIZE][2], int k) { //query[2][DICT_SIZE]
-//void search(Node *root, double RList[DICT_SIZE][2], int k, double *query) { //query[2][DICT_SIZE]
-    // debug
-    //printf("root = %d\n", root);
-    //printf("id = %d\n", root->ID);
+void search(Node *root, double RList[DICT_SIZE][2], int k) {
     int i;
     double result = 0.0;
     // do dot
@@ -88,6 +84,7 @@ void search(Node *root, double RList[DICT_SIZE][2], int k) { //query[2][DICT_SIZ
         result += query[0][i] * root->D[0][i];
         result += query[1][i] * root->D[1][i];
     }
+//    printf("Node %d, reault = %lf\n", root->ID, result);
     // divide by node type
     if( root->FID != -1 ) { // leaf node
         if( result > RList[k-1][1] ) {
@@ -107,10 +104,10 @@ void search(Node *root, double RList[DICT_SIZE][2], int k) { //query[2][DICT_SIZ
             }
         }
     } else { // internal node
-        if( result > RList[k-1][1] ) {
+//        if( result > RList[k-1][1] ) {
             search(root->Pl, RList, k);
             search(root->Pr, RList, k);
-        }
+//        }
     }
     return ;
 }
@@ -188,6 +185,7 @@ int main( void ) {
         for( i = 0; i < DICT_SIZE; i++ ) {
             sum += querytmp[i] * querytmp[i];
         }
+        sum = sqrt(sum);
         for( i = 0; i < DICT_SIZE; i++ ) {
             querytmp[i] /= sum;
         }
@@ -197,11 +195,14 @@ int main( void ) {
         for( i = 0; i < DICT_SIZE; i++ ) {
             if( SK[i] == 0 ) {
                 querytmp2[0][i] = querytmp[i] *rand()/rand();
+//                if( querytmp2[0][i] > 1 ||  querytmp2[0][i] < -1 )
+//                    querytmp2[0][i] = 0;
                 querytmp2[1][i] = querytmp[i] - querytmp2[0][i];
             } else {
                 querytmp2[0][i] = querytmp[i];
                 querytmp2[1][i] = querytmp[i];
             }
+//            printf("%lf %lf\n", querytmp2[0][i], querytmp2[1][i]);
         }
         for( i = 0; i < DICT_SIZE; i++ ) {
             query[0][i] = 0;

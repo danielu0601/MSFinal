@@ -1,9 +1,9 @@
-%for i = 26:26:676
-for i = [26 676]
-    M1 = -1 + (2).*rand(i);
+for i = 26:26:676
+%for i = [26 676]
+    M1  = rand(i);
     M1i = inv(M1); %M1^-1
     M1t = transpose(M1); %M1'
-    M2 = -1 + (2).*rand(i);
+    M2  = rand(i);
     M2i = inv(M2); %M1^-1
     M2t = transpose(M2); %M1'
     

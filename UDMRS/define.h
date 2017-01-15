@@ -2,8 +2,8 @@
  * This code .h file define size and struct used.
  */
 
-#define FILE_SIZE 32
-#define DICT_SIZE 26
+#define FILE_SIZE 500
+#define DICT_SIZE 650
 #define FILE_PATH "../doc/FILE0001.txt"
 
 // struct of node

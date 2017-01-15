@@ -11,6 +11,9 @@
  * This code read the tree from file and do search.
  */
 
+double TF[FILE_SIZE][DICT_SIZE], IDF[DICT_SIZE];
+double query[DICT_SIZE], RList[FILE_SIZE][2];
+
 // struct of queue
 Node queue[FILE_SIZE*2];
 int front = 0;
@@ -65,10 +68,7 @@ Node *file2tree( FILE *fp ) {
 }
 
 // search function
-void search(Node *root, double RList[DICT_SIZE][2], int k, double *query) { //query[DICT_SIZE]
-    // debug
-    //printf("root = %d\n", root);
-    //printf("id = %d\n", root->ID);
+void search(Node *root, double RList[FILE_SIZE][2], int k) {
     int i;
     double result = 0.0;
     // do dot
@@ -95,16 +95,17 @@ void search(Node *root, double RList[DICT_SIZE][2], int k, double *query) { //qu
         }
     } else { // internal node
         if( result > RList[k-1][1] ) {
-            search(root->Pl, RList, k, query);
-            search(root->Pr, RList, k, query);
+            search(root->Pl, RList, k);
+            search(root->Pr, RList, k);
         }
     }
     return ;
 }
 
 int main( void ) {
-    int i, j;
-    double TF[FILE_SIZE][DICT_SIZE], IDF[DICT_SIZE];
+    int i, j, k, n, wordindex;
+    double sum;
+    char req[10];
     FILE *fp;
     Node *root;
 
@@ -123,9 +124,6 @@ int main( void ) {
 
     // do search
     while( 1 ) {
-        int k, n, wordindex;
-        char req[10];
-        double query[DICT_SIZE], sum, RList[FILE_SIZE][2];
         memset(query, 0, sizeof(query));
         memset(RList, 0, sizeof(RList));
         puts("Usage : 'k-top' 'keyword number' 'keyword1' 'keyword2' ...");
@@ -161,7 +159,7 @@ int main( void ) {
             query[i] /= sum;
         }
         // really do search
-        search(root, RList, k, query);
+        search(root, RList, k);
         puts("\n\nReaults = ");
         for( i = 0; i < k; i++ ) {
             if( RList[i][1] > 0 )

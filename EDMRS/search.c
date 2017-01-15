@@ -13,11 +13,11 @@
  */
 
 double TF[FILE_SIZE][DICT_SIZE], IDF[DICT_SIZE];
-double querytmp[DICT_SIZE];
-double querytmp2[2][DICT_SIZE];
-double query[2][DICT_SIZE];
+double querytmp[DICT_SIZE+PHAN_SIZE];
+double querytmp2[2][DICT_SIZE+PHAN_SIZE];
+double query[2][DICT_SIZE+PHAN_SIZE];
 double RList[FILE_SIZE][2];
-double M[2][DICT_SIZE][DICT_SIZE];
+double M[2][DICT_SIZE+PHAN_SIZE][DICT_SIZE+PHAN_SIZE];
 int SK[DICT_SIZE];
 
 // struct of queue
@@ -50,7 +50,7 @@ Node *file2tree( FILE *fp ) {
     // ID 
     fscanf(fp, "%d ", &tn.ID);
     // D
-    for( i = 0; i < DICT_SIZE; i++ ) {
+    for( i = 0; i < DICT_SIZE+PHAN_SIZE; i++ ) {
         fscanf(fp, "%lf ", &tn.D[0][i]);
         fscanf(fp, "%lf ", &tn.D[1][i]);
     }
@@ -76,15 +76,11 @@ Node *file2tree( FILE *fp ) {
 }
 
 // search function
-void search(Node *root, double RList[DICT_SIZE][2], int k) { //query[2][DICT_SIZE]
-//void search(Node *root, double RList[DICT_SIZE][2], int k, double *query) { //query[2][DICT_SIZE]
-    // debug
-    //printf("root = %d\n", root);
-    //printf("id = %d\n", root->ID);
+void search(Node *root, double RList[FILE_SIZE][2], int k) {
     int i;
     double result = 0.0;
     // do dot
-    for (i = 0; i < DICT_SIZE; i++) {
+    for (i = 0; i < DICT_SIZE+PHAN_SIZE; i++) {
         result += query[0][i] * root->D[0][i];
         result += query[1][i] * root->D[1][i];
     }
@@ -107,10 +103,10 @@ void search(Node *root, double RList[DICT_SIZE][2], int k) { //query[2][DICT_SIZ
             }
         }
     } else { // internal node
-        if( result > RList[k-1][1] ) {
+//        if( result > RList[k-1][1] ) {
             search(root->Pl, RList, k);
             search(root->Pr, RList, k);
-        }
+//        }
     }
     return ;
 }
@@ -133,8 +129,8 @@ int main( void ) {
     // read inv M from file
     fp = fopen(MATRIXinv_PATH, "r");
     for( k = 0; k < 2; k++ ) {
-        for( i = 0; i < DICT_SIZE; i++ ) {
-            for( j = 0; j < DICT_SIZE; j++ ) {
+        for( i = 0; i < DICT_SIZE+PHAN_SIZE; i++ ) {
+            for( j = 0; j < DICT_SIZE+PHAN_SIZE; j++ ) {
                 fscanf(fp, "%lf ", &M[k][i][j]);
             }
         }
@@ -188,6 +184,7 @@ int main( void ) {
         for( i = 0; i < DICT_SIZE; i++ ) {
             sum += querytmp[i] * querytmp[i];
         }
+        sum = sqrt(sum);
         for( i = 0; i < DICT_SIZE; i++ ) {
             querytmp[i] /= sum;
         }
@@ -203,10 +200,14 @@ int main( void ) {
                 querytmp2[1][i] = querytmp[i];
             }
         }
-        for( i = 0; i < DICT_SIZE; i++ ) {
+        for( i = DICT_SIZE; i < DICT_SIZE+PHAN_SIZE; i++ ) {
+            querytmp2[0][i] = rand()%2;
+            querytmp2[1][i] = rand()%2;
+        }
+        for( i = 0; i < DICT_SIZE+PHAN_SIZE; i++ ) {
             query[0][i] = 0;
             query[1][i] = 0;
-            for( j = 0; j < DICT_SIZE; j++ ) {
+            for( j = 0; j < DICT_SIZE+PHAN_SIZE; j++ ) {
                 query[0][i] += M[0][i][j] * querytmp2[0][j];
                 query[1][i] += M[1][i][j] * querytmp2[1][j];
             }

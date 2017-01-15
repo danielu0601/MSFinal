@@ -140,6 +140,7 @@ int main( void ) {
             printf("Error : There is no keyword in FILE%04d\n", i);
             return -1;
         }
+        TFsum = sqrt(TFsum);
 
         tp.ID = ID;
         ID++;

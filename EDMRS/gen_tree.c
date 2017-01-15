@@ -16,9 +16,9 @@
 // File data tmp
 double TF[FILE_SIZE][DICT_SIZE], IDF[DICT_SIZE];
 int SK[DICT_SIZE]; // secret key
-double M[2][DICT_SIZE][DICT_SIZE];
-double Dtmp[DICT_SIZE];
-double D[2][DICT_SIZE];
+double M[2][DICT_SIZE+PHAN_SIZE][DICT_SIZE+PHAN_SIZE];
+double Dtmp[DICT_SIZE+PHAN_SIZE];
+double D[2][DICT_SIZE+PHAN_SIZE];
 
 // struct of queue
 Node queue[FILE_SIZE*2];
@@ -49,7 +49,7 @@ void tree2file( FILE *fp, Node *root ) {
     // ID 
     fprintf(fp, "%d ", root->ID);
     // D
-    for( i = 0; i < DICT_SIZE; i++ ) {
+    for( i = 0; i < DICT_SIZE+PHAN_SIZE; i++ ) {
         fprintf(fp, "%lf ", root->D[0][i]);
         fprintf(fp, "%lf ", root->D[1][i]);
     }
@@ -88,8 +88,8 @@ int main( void ) {
     // read Matrixs from file
     fp = fopen(MATRIX_PATH, "r");
     for( k = 0; k < 2; k++ ) {
-        for( i = 0; i < DICT_SIZE; i++ ) {
-            for( j = 0; j < DICT_SIZE; j++ ) {
+        for( i = 0; i < DICT_SIZE+PHAN_SIZE; i++ ) {
+            for( j = 0; j < DICT_SIZE+PHAN_SIZE; j++ ) {
                 fscanf(fp, "%lf ", &M[k][i][j]);
             }
         }
@@ -140,6 +140,7 @@ int main( void ) {
             printf("Error : There is no keyword in FILE%04d\n", i);
             return -1;
         }
+        TFsum = sqrt(TFsum);
 
         tp.ID = ID;
         ID++;
@@ -154,10 +155,15 @@ int main( void ) {
                 D[1][j] = Dtmp[j] - D[0][j];
             }
         }
-        for( j = 0; j < DICT_SIZE; j++ ) {
+        for( j = DICT_SIZE; j < DICT_SIZE+PHAN_SIZE; j++ ) {
+            D[0][j] = 0.00003*( ((double)rand()/RAND_MAX)*2-1 );
+            D[1][j] = 0.00003*( ((double)rand()/RAND_MAX)*2-1 );
+//            printf("%lf %lf\n", D[0][j], D[1][j]);
+        }
+        for( j = 0; j < DICT_SIZE+PHAN_SIZE; j++ ) {
             tp.D[0][j] = 0;
             tp.D[1][j] = 0;
-            for( k = 0; k < DICT_SIZE; k++ ) {
+            for( k = 0; k < DICT_SIZE+PHAN_SIZE; k++ ) {
                 tp.D[0][j] += M[0][j][k] * D[0][k];
                 tp.D[1][j] += M[1][j][k] * D[1][k];
             }
@@ -178,7 +184,7 @@ int main( void ) {
         tp2 = removeData();
         tp3.ID = ID;
         ID++;
-        for( i = 0; i < DICT_SIZE; i++ ) {
+        for( i = 0; i < DICT_SIZE+PHAN_SIZE; i++ ) {
             tp3.D[0][i] = max( tp1->D[0][i], tp2->D[0][i] );
             tp3.D[1][i] = max( tp1->D[1][i], tp2->D[1][i] );
         }
