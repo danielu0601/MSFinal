@@ -146,7 +146,7 @@ int main( void ) {
                 D[0][j] = Dtmp[j];
                 D[1][j] = Dtmp[j];
             } else {
-                D[0][j] = Dtmp[j] *rand()/rand();
+                D[0][j] = Dtmp[j] *rand()/RAND_MAX;
                 D[1][j] = Dtmp[j] - D[0][j];
             }
         }

@@ -191,7 +191,7 @@ int main( void ) {
         // 
         for( i = 0; i < DICT_SIZE; i++ ) {
             if( SK[i] == 0 ) {
-                querytmp2[0][i] = querytmp[i] *rand()/rand();
+                querytmp2[0][i] = querytmp[i] *rand()/RAND_MAX;
                 querytmp2[1][i] = querytmp[i] - querytmp2[0][i];
             } else {
                 querytmp2[0][i] = querytmp[i];
