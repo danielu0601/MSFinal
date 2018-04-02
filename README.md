@@ -1,5 +1,4 @@
 # MSFinal
-
 This is the Final project of Multimedia Security.
 
 This implement the paper "A Secure and Dynamic Multi-Keyword Ranked Search Scheme over Encrypted Cloud Data".
